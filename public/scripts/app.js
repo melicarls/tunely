@@ -55,8 +55,30 @@ $(document).ready(function() {
 
   $('#saveSong').on('click', handleNewSongSubmit);
 
+  $('#albumTarget').on('click', '.delete-album', function(e) {
+    var thisAlbumId = $(this).closest('.album').data('album-id');
+    console.log("Clicked delete album for this album:", thisAlbumId);
+    $.ajax ({
+      method: 'DELETE',
+      url: "/api/albums/" + thisAlbumId,
+      success: deleteAlbumSuccess(thisAlbumId),
+      error: deleteAlbumError,
+    });
+  });
+
 //End document ready
 });
+
+function deleteAlbumSuccess(albumId) {
+  console.log("Successful deletion of:", albumId);
+  var thisAlbum = $(this).closest('.album');
+  thisAlbum.remove();
+  location.reload();
+}
+
+function deleteAlbumError() {
+  console.log ("Album could not be deleted.");
+}
 
 function handleNewSongSubmit(e) {
   console.log("New song submit triggered");
