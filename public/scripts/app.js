@@ -63,7 +63,7 @@ $(document).ready(function() {
     var newArtistName = $('#textinput').val();
     var newReleaseDate = $('#releaseDate').val();
     var genreString = $('#genres').val();
-    var newGenres = genreString.split(",");
+    var newGenres = genreString.split(" , ");
     $.ajax({
       method: 'POST',
       url: '/api/albums',
