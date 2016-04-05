@@ -33,9 +33,14 @@ app.get('/', function homepage (req, res) {
  * JSON API Endpoints
  */
 
+//API
 app.get('/api', controllers.api.index);
+//Albums
 app.get('/api/albums', controllers.albums.index);
+app.get('/api/albums/:album_id', controllers.albums.show);
 app.post('/api/albums', controllers.albums.create);
+//Songs
+app.post('/api/albums/:album_id/songs', controllers.songs.create);
 
 /**********
  * SERVER *

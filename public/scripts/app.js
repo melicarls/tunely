@@ -7,36 +7,6 @@
 
 var template;
 var $albumsList;
-var sampleAlbums = [];
-
-/* hard-coded data! */
-sampleAlbums.push({
-             artistName: 'Ladyhawke',
-             name: 'Ladyhawke',
-             releaseDate: '2008, November 18',
-             genres: [ 'new wave', 'indie rock', 'synth pop' ]
-           });
-sampleAlbums.push({
-             artistName: 'The Knife',
-             name: 'Silent Shout',
-             releaseDate: '2006, February 17',
-             genres: [ 'synth pop', 'electronica', 'experimental' ]
-           });
-sampleAlbums.push({
-             artistName: 'Juno Reactor',
-             name: 'Shango',
-             releaseDate: '2000, October 9',
-             genres: [ 'electronic', 'goa trance', 'tribal house' ]
-           });
-sampleAlbums.push({
-             artistName: 'Philip Wesley',
-             name: 'Dark Night of the Soul',
-             releaseDate: '2008, September 12',
-             genres: [ 'piano' ]
-           });
-/* end of hard-coded data */
-
-
 
 $(document).ready(function() {
   console.log('app.js loaded!');
@@ -46,9 +16,6 @@ $(document).ready(function() {
   var source = $('#albums-template').html();
   template = Handlebars.compile(source);
 
-  sampleAlbums.forEach(function(album){
-    renderAlbum(album);
-  });
 
   $.ajax({
     method: 'GET',
@@ -63,7 +30,7 @@ $(document).ready(function() {
     var newArtistName = $('#textinput').val();
     var newReleaseDate = $('#releaseDate').val();
     var genreString = $('#genres').val();
-    var newGenres = genreString.split(" , ");
+    var newGenres = genreString.split(",");
     $.ajax({
       method: 'POST',
       url: '/api/albums',
@@ -78,8 +45,53 @@ $(document).ready(function() {
     });
   });
 
+  $('#albumTarget').on('click', '.add-song', function(e) {
+    console.log("Clicked add song.");
+    var thisAlbumId = $(this).closest('.album').data('album-id');
+    console.log("Id", thisAlbumId);
+    $('#songModal').data('album-id', thisAlbumId);
+    $('#songModal').modal();
+  });
+
+  $('#saveSong').on('click', handleNewSongSubmit);
+
 //End document ready
 });
+
+function handleNewSongSubmit(e) {
+  console.log("New song submit triggered");
+  e.preventDefault();
+  var newSongName = $('#songName').val();
+  var newTrackNumber = $('#trackNumber').val();
+  var thisAlbumId = $('#songModal').data('albumId');
+  var thisUrl = "/api/albums/" + thisAlbumId + "/songs";
+  $.ajax ({
+    method: 'POST',
+    url: thisUrl,
+    data: {
+      name: newSongName,
+      trackNumber: newTrackNumber,
+    },
+    success: newSongSuccess,
+    error: newSongError,
+  });
+}
+
+function newSongSuccess(data) {
+  console.log("Got this data from POST" + data);
+  $('#songName').val("");
+  $('#trackNumber').val("");
+  $('#songModal').modal('hide');
+  var thisAlbumId = $('#songModal').data('albumId');
+  $.get('/api/albums/'+thisAlbumId, function(data) {
+    $('[data-album-id=' + thisAlbumId +']').remove();
+    renderAlbum(data);
+  });
+}
+
+function newSongError(err) {
+  console.log('Post request returned this error:', err);
+}
 
 function handleSuccess(json) {
   console.log(json);
