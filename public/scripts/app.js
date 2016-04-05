@@ -66,6 +66,26 @@ $(document).ready(function() {
     });
   });
 
+//Edit button click
+  $('#albumTarget').on('click', '.edit-album', function(e) {
+    var thisAlbumId = $(this).closest('.album').data('album-id');
+    console.log("Clicked edit album for this album:", thisAlbumId);
+    currentAlbum = $(this).closest('.album');
+    currentAlbum.find('.edit-album').toggle();
+    currentAlbum.find('.save-album').toggle();
+  });
+
+//Save button click
+  $('#albumTarget').on('click', '.save-album', function(e) {
+    var thisAlbumId = $(this).closest('.album').data('album-id');
+    console.log("Clicked save album for this album:", thisAlbumId);
+    currentAlbum = $(this).closest('.album');
+    currentAlbum.find('.edit-album').toggle();
+    currentAlbum.find('.save-album').toggle();
+  });
+
+
+
 //End document ready
 });
 
@@ -143,4 +163,5 @@ function renderAlbum(album) {
   var albumsTemplate = Handlebars.compile(albumHtml);
   var html = albumsTemplate(album);
   $('#albumTarget').prepend(html);
-}
+  $('.save-album').hide();
+  }
